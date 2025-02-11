@@ -169,3 +169,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Mac generates trash artefacts
+.DS_store
+
+# Kafka
+kafka_data
+state
+.state
