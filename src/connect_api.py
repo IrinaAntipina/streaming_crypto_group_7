@@ -9,19 +9,24 @@ load_dotenv()
 API_KEY = os.getenv("COINMARKET_API")
 EXCHANGE_KEY = os.getenv("EXCHANGE_API")
 
+if not API_KEY:
+    raise ValueError("❌ COINMARKET_API saknas i .env!")
+if not EXCHANGE_KEY:
+    raise ValueError("❌ EXCHANGE_API saknas i .env!")
+
 API_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
-EXCHANGE_URL ="https://v6.exchangerate-api.com/v6/c9f25a95a4c73d272faed791/latest/USD"
+EXCHANGE_URL = f"https://v6.exchangerate-api.com/v6/{EXCHANGE_KEY}/latest/USD"
 
 def get_exchange():
     try: 
-        response = requests.get(EXCHANGE_KEY)
+        response = requests.get(EXCHANGE_URL)
         response.raise_for_status()
         return response.json().get("conversion_rates", {})
     except requests.RequestException as e:
-        print(f"Fel vid hämtning av växelkurser: {e}")
+        print(f"⚠️ Fel vid hämtning av växelkurser: {e}")
         return {}
 
-def get_crypto(symbol:str):
+def get_crypto(symbol: str):
     parameters = {"symbol": symbol, "convert": "USD"}
     headers = {"Accepts": "application/json", "X-CMC_PRO_API_KEY": API_KEY}
     
@@ -37,11 +42,10 @@ def get_crypto(symbol:str):
         
         return {
             "name": data["name"],
-            "symbol":data["symbol"],
+            "symbol": data["symbol"],
             "price_usd": price_usd
         }
         
     except RequestException as e:
-        print(f"Fel vid API-anrop: {e}")
+        print(f"⚠️ Fel vid API-anrop: {e}")
         return None
-
