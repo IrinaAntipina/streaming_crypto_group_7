@@ -32,4 +32,4 @@ if __name__ == "__main__":
     while True:
         main("TRX")  
         time.sleep(30)
- 
+
