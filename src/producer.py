@@ -1,0 +1,46 @@
+
+from quixstreams import Application
+from connect_api import get_crypto, get_exchange
+import json
+import time
+from pprint import pprint
+
+app = Application(broker_address="localhost:9092", consumer_group="coin_group")
+
+messages_topic = app.topic(name="messages", value_serializer="json")
+
+SCANDINAVIAN_CURRENCIES = ["SEK", "NOK", "DKK", "EUR"]
+
+def main(symbols=["TRX"]):
+    exchange_rates = get_exchange()
+    with app.get_producer() as producer:
+        while True:
+            for symbol in symbols:
+                crypto_data = get_crypto(symbol)
+
+                if crypto_data:
+                    converted_prices = {
+                        currency: round(crypto_data["price_usd"] * exchange_rates.get(currency, 1), 2)
+                        for currency in SCANDINAVIAN_CURRENCIES
+                    }
+
+                    message = {
+                        "name": crypto_data["name"],
+                        "symbol": crypto_data["symbol"],
+                        "prices": converted_prices,
+                        "timestamp": time.time(),
+                    }
+                
+                    kafka_msg = messages_topic.serialize(key=message["symbol"], value=message)
+
+                    print(f'Producing event: key="{kafka_msg.key}", value="{kafka_msg.value}"')
+                    producer.produce(
+                        topic=messages_topic.name,
+                        key=kafka_msg.key,
+                        value=kafka_msg.value,
+                    )
+            time.sleep(30)
+
+if __name__ == "__main__":
+    main(["TRX"])  
+
