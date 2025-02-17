@@ -17,6 +17,7 @@ def extract_coin_data(message):
         "price_nok": message["prices"]["NOK"],
         "price_dkk": message["prices"]["DKK"],
         "price_eur": message["prices"]["EUR"],
+        "price_isk": message["prices"]["ISK"],
         "timestamp": message["timestamp"]
     }
 

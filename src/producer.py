@@ -9,7 +9,7 @@ app = Application(broker_address="localhost:9092", consumer_group="coin_group")
 
 messages_topic = app.topic(name="messages", value_serializer="json")
 
-SCANDINAVIAN_CURRENCIES = ["SEK", "NOK", "DKK", "EUR"]
+NORDIC_CURRENCY = ["SEK", "NOK", "DKK", "EUR", "ISK"]
 
 def main(symbols=["TRX"]):
     exchange_rates = get_exchange()
@@ -21,7 +21,7 @@ def main(symbols=["TRX"]):
                 if crypto_data:
                     converted_prices = {
                         currency: round(crypto_data["price_usd"] * exchange_rates.get(currency, 1), 2)
-                        for currency in SCANDINAVIAN_CURRENCIES
+                        for currency in NORDIC_CURRENCY
                     }
 
                     message = {
