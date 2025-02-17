@@ -76,15 +76,6 @@ services:
       retries: 5
       timeout: 3s
 
-  quix:
-    image: ghcr.io/quixio/quix:latest  # ✅ Rätt bild
-    container_name: quix
-    ports:
-      - "5555:5555"
-    environment:
-      - KAFKA_BROKER=broker:29092
-    depends_on:
-      - broker
 
 volumes:
   postgres_data:
