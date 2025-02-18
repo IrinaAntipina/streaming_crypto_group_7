@@ -18,7 +18,10 @@ def extract_coin_data(message):
         "price_dkk": message["prices"]["DKK"],
         "price_eur": message["prices"]["EUR"],
         "price_isk": message["prices"]["ISK"],
-        "timestamp": message["timestamp"]
+        "volume_24h": message["volume_24h"],  
+        "volume_change_24h": message["volume_change_24h"],  
+        "percent_change_24h": message["percent_change_24h"],  
+        "timestamp": message["timestamp"],
     }
 
 
@@ -30,7 +33,7 @@ def create_postgres_sink():
         user=POSTGRES_USER,
         password=POSTGRES_PASSWORD,
         table_name="trx",
-        schema_auto_update=True,
+        schema_auto_update=True,  
     )
 
     return sink
@@ -49,9 +52,11 @@ def main():
 
     sdf = sdf.apply(extract_coin_data)
 
-    sdf.update(lambda coin_data: print(coin_data))
+    sdf.update(lambda coin_data: print(coin_data))  
 
     postgres_sink = create_postgres_sink()
+    
+    sdf.update(lambda coin_data: print("Sending to PostgreSQL:", coin_data)) ###
 
     sdf.sink(postgres_sink)
     app.run()
