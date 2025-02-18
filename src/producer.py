@@ -1,4 +1,3 @@
-
 from quixstreams import Application
 from connect_api import get_crypto, get_exchange
 import json
@@ -28,6 +27,9 @@ def main(symbols=["TRX"]):
                         "name": crypto_data["name"],
                         "symbol": crypto_data["symbol"],
                         "prices": converted_prices,
+                        "volume_24h": crypto_data.get("volume_24h", 0), 
+                        "volume_change_24h": crypto_data.get("volume_change_24h", 0), 
+                        "percent_change_24h": crypto_data.get("percent_change_24h", 0),  
                         "timestamp": time.strftime('%Y-%m-%d %H:%M:%S'),
                     }
                 
@@ -42,4 +44,4 @@ def main(symbols=["TRX"]):
             time.sleep(30)
 
 if __name__ == "__main__":
-    main(["TRX"])  
+    main(["TRX"])
