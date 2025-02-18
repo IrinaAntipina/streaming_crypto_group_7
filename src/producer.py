@@ -28,7 +28,7 @@ def main(symbols=["TRX"]):
                         "name": crypto_data["name"],
                         "symbol": crypto_data["symbol"],
                         "prices": converted_prices,
-                        "timestamp": time.time(),
+                        "timestamp": time.strftime('%Y-%m-%d %H:%M:%S'),
                     }
                 
                     kafka_msg = messages_topic.serialize(key=message["symbol"], value=message)
@@ -43,4 +43,3 @@ def main(symbols=["TRX"]):
 
 if __name__ == "__main__":
     main(["TRX"])  
-
