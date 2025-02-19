@@ -26,7 +26,15 @@ def get_exchange():
         return {}
 
 def get_crypto(symbol: str):
-    parameters = {"symbol": symbol, "convert": "USD"}
+  
+    symbol_mapping = {
+        "TRX": "TRX",
+        "S": "S"  
+    }
+    
+    api_symbol = symbol_mapping.get(symbol, symbol)
+    
+    parameters = {"symbol": api_symbol, "convert": "USD"}
     headers = {"Accepts": "application/json", "X-CMC_PRO_API_KEY": API_KEY}
    
     session = Session()
@@ -35,7 +43,7 @@ def get_crypto(symbol: str):
     try:
         response = session.get(API_URL, params=parameters)
         response.raise_for_status()
-        data = response.json()["data"][symbol]
+        data = response.json()["data"][api_symbol]
 
         price_usd = data["quote"]["USD"]["price"]
         volume_24h = data["quote"]["USD"]["volume_24h"]
@@ -44,7 +52,7 @@ def get_crypto(symbol: str):
 
         return {
             "name": data["name"],
-            "symbol": data["symbol"],
+            "symbol": symbol,  
             "price_usd": price_usd,
             "volume_24h": volume_24h,
             "volume_change_24h": volume_change_24h,
@@ -56,4 +64,7 @@ def get_crypto(symbol: str):
         return None
 
 if __name__ == "__main__":
+    print("Testing TRX:")
     print(json.dumps(get_crypto("TRX"), indent=4))
+    print("\nTesting S:")
+    print(json.dumps(get_crypto("S"), indent=4))

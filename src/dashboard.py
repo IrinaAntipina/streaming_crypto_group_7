@@ -38,7 +38,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def load_data(symbol):
-    query = f"SELECT * FROM trx WHERE symbol = '{symbol}' ORDER BY timestamp DESC LIMIT 100"
+    # Select the appropriate table based on the cryptocurrency
+    table = "trx" if symbol == "TRX" else "sonic"
+    query = f"SELECT * FROM {table} WHERE symbol = '{symbol}' ORDER BY timestamp DESC LIMIT 100"
     with engine.connect() as conn:
         df = pd.read_sql(query, conn)
         df["timestamp"] = pd.to_datetime(df["timestamp"])
@@ -59,14 +61,21 @@ def layout():
 
     col1, col2 = st.columns(2)
     with col1:
-        crypto_choice = st.selectbox("Välj kryptovaluta", ["TRX", "BTC", "ETH"])
+        crypto_choice = st.selectbox("Välj kryptovaluta", ["TRX", "S"])  # Added "S" option
     with col2:
         currency_choice = st.selectbox("Välj valuta", ["SEK", "NOK", "DKK", "EUR", "ISK"])
 
     df = load_data(crypto_choice)
 
+  #  if df.empty:
+  #      st.warning("Ingen data tillgänglig ännu. Vänta på uppdateringar...")
+   #     return
+    
     if df.empty:
-        st.warning("Ingen data tillgänglig ännu. Vänta på uppdateringar...")
+        if crypto_choice == "S":
+            st.warning("Ingen data tillgänglig för Sonic ännu. Se till att producer_s.py och consumer_s.py körs och vänta på att data ska börja strömma in.")
+        else:
+            st.warning("Ingen data tillgänglig ännu. Vänta på uppdateringar...")
         return
 
     latest = df.iloc[0]
