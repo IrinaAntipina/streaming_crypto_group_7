@@ -1,6 +1,7 @@
 import streamlit as st
 from sqlalchemy import create_engine
 import pandas as pd
+import time
 from constants import (
     POSTGRES_USER,
     POSTGRES_DBNAME,
@@ -20,7 +21,7 @@ st.markdown("""
             color: white;
         }
         h1, h2, h3 {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Arial', sans-serif';
             color: #f39c12;
             text-align: center;
         }
@@ -38,7 +39,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def load_data(symbol):
-    # Select the appropriate table based on the cryptocurrency
     table = "trx" if symbol == "TRX" else "sonic"
     query = f"SELECT * FROM {table} WHERE symbol = '{symbol}' ORDER BY timestamp DESC LIMIT 100"
     with engine.connect() as conn:
@@ -59,18 +59,18 @@ def format_number(value, suffix=""):
 def layout():
     st.markdown("<h1>🚀 Crypto Live Dashboard</h1>", unsafe_allow_html=True)
 
+    crypto_mapping = {"TRX": "TRON (TRX)", "S": "SONIC (S)"}
+    crypto_display = list(crypto_mapping.values())
+
     col1, col2 = st.columns(2)
     with col1:
-        crypto_choice = st.selectbox("Välj kryptovaluta", ["TRX", "S"])  # Added "S" option
+        selected_crypto = st.selectbox("Välj kryptovaluta", crypto_display)
+        crypto_choice = [key for key, value in crypto_mapping.items() if value == selected_crypto][0]
     with col2:
         currency_choice = st.selectbox("Välj valuta", ["SEK", "NOK", "DKK", "EUR", "ISK"])
 
     df = load_data(crypto_choice)
 
-  #  if df.empty:
-  #      st.warning("Ingen data tillgänglig ännu. Vänta på uppdateringar...")
-   #     return
-    
     if df.empty:
         if crypto_choice == "S":
             st.warning("Ingen data tillgänglig för Sonic ännu. Se till att producer_s.py och consumer_s.py körs och vänta på att data ska börja strömma in.")
@@ -87,13 +87,16 @@ def layout():
     col3.metric(f"📊 24h Volym ({currency_choice})", format_number(latest[f'volume_{currency_choice.lower()}']))
     col4.metric("📈 Volymändring 24h", format_number(latest["volume_change_24h"], "%"), delta=latest["volume_change_24h"])
 
-    st.markdown(f"### 📈 {crypto_choice} Pris i {currency_choice}")
+    st.markdown(f"### 📈 {selected_crypto} Pris i {currency_choice}")
     fig_price = line_chart(df.index, df[f"price_{currency_choice.lower()}"], title="Pris över tid", xlabel="Tid", ylabel=f"Pris ({currency_choice})")
     st.pyplot(fig_price)
 
-    st.markdown(f"### 📊 Handelsvolym för {crypto_choice} i {currency_choice}")
+    st.markdown(f"### 📊 Handelsvolym för {selected_crypto} i {currency_choice}")
     fig_volume = line_chart(df.index, df[f"volume_{currency_choice.lower()}"], title="Volym över tid", xlabel="Tid", ylabel="Volym")
     st.pyplot(fig_volume)
+    
+    time.sleep(60)
+    st.rerun()
 
 if __name__ == "__main__":
     layout()
