@@ -8,7 +8,6 @@ from constants import (
     POSTGRES_PORT,
 )
 
-
 def extract_coin_data(message):
     return {
         "coin": message["name"],
@@ -18,12 +17,15 @@ def extract_coin_data(message):
         "price_dkk": message["prices"]["DKK"],
         "price_eur": message["prices"]["EUR"],
         "price_isk": message["prices"]["ISK"],
-        "volume_24h": message["volume_24h"],  
-        "volume_change_24h": message["volume_change_24h"],  
-        "percent_change_24h": message["percent_change_24h"],  
+        "volume_sek": message["volumes"]["SEK"],  # Lagrar volymen i olika valutor
+        "volume_nok": message["volumes"]["NOK"],
+        "volume_dkk": message["volumes"]["DKK"],
+        "volume_eur": message["volumes"]["EUR"],
+        "volume_isk": message["volumes"]["ISK"],
+        "volume_change_24h": message["volume_change_24h"],
+        "percent_change_24h": message["percent_change_24h"],
         "timestamp": message["timestamp"],
     }
-
 
 def create_postgres_sink():
     sink = PostgreSQLSink(
@@ -37,7 +39,6 @@ def create_postgres_sink():
     )
 
     return sink
-
 
 def main():
     app = Application(
@@ -56,11 +57,10 @@ def main():
 
     postgres_sink = create_postgres_sink()
     
-    sdf.update(lambda coin_data: print("Sending to PostgreSQL:", coin_data)) ###
+    sdf.update(lambda coin_data: print("Sending to PostgreSQL:", coin_data)) 
 
     sdf.sink(postgres_sink)
     app.run()
-
 
 if __name__ == "__main__":
     main()
