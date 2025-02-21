@@ -62,12 +62,32 @@ def layout():
     crypto_mapping = {"TRX": "TRON (TRX)", "S": "SONIC (S)"}
     crypto_display = list(crypto_mapping.values())
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         selected_crypto = st.selectbox("Välj kryptovaluta", crypto_display)
         crypto_choice = [key for key, value in crypto_mapping.items() if value == selected_crypto][0]
     with col2:
+        if crypto_choice == "TRX":
+            st.image("src/tron.png", width=100)  
+        else:
+            st.image("src/sonic.png", width=100)
+
+    with col3:    
         currency_choice = st.selectbox("Välj valuta", ["SEK", "NOK", "DKK", "EUR", "ISK"])
+
+
+    if crypto_choice == "TRX":
+        st.markdown("""
+        **TRON (TRX)** lanserades 2017 av Justin Sun och bygger upp infrastrukturen för ett verkligt decentraliserat internet och dess höga genomströmning och skalbarhet gör den till en populär blockkedja för att bygga decentraliserade appar (dappar). TRX-token ansluter hela TRON-ekosystemet och har ett antal tillämpningar, bland annat för att få rösträtt och bandbredd.
+        
+        TRON (TRX) är en mycket nyare uppfinning än Bitcoin (BTC), men dess pris och värde har ändå haft en intressant historia. Om du vill veta mer om dess rörelser är du på rätt plats. Vi har sammanställt allt du behöver veta för att bättre förstå tidigare TRX-prisrörelser – och de faktorer som påverkar dem.
+        """)
+    elif crypto_choice == "S":
+        st.markdown("""
+        **Sonic (S)** – en ny kryptovaluta som precis har börjat sin resa, och ärligt talat, vi vet inte riktigt vad vi ska säga om den än. Kanske är detta den där mytomspunna myntet som ser ut som en gåta idag, men som imorgon är på allas läppar! Vem vet? Kanske är just **Sonic (S)** kryptovalutan som alla kommer att prata om om några år, och du kommer att kunna skryta om att du köpte den i rätt tid.
+        
+        Om du letar efter något nytt, utan alla vanliga löften och förutsägbara diagram, så kanske **Sonic (S)** är det du bör köpa för att testa din lycka. Kanske kommer den att bli den nya stjärnan på kryptomarknaden, eller kanske är det bara ännu ett experiment... Vem vet, om inte du?
+        """)
 
     df = load_data(crypto_choice)
 
