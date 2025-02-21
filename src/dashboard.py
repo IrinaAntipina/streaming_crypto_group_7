@@ -35,6 +35,19 @@ st.markdown("""
             border-radius: 10px;
             padding: 10px;
         }
+        /* 🔹 Mörk bakgrund och vit text för tabeller */
+        section[data-testid="stTable"] {
+            background-color: #0e1117 !important;
+            color: white !important;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        div[data-testid="stDataFrame"] {
+            background-color: #0e1117 !important;
+            color: white !important;
+            border-radius: 10px;
+            padding: 10px;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -75,7 +88,6 @@ def layout():
     with col3:    
         currency_choice = st.selectbox("Välj valuta", ["SEK", "NOK", "DKK", "EUR", "ISK"])
 
-
     if crypto_choice == "TRX":
         st.markdown("""
         **TRON (TRX)** lanserades 2017 av Justin Sun och bygger upp infrastrukturen för ett verkligt decentraliserat internet och dess höga genomströmning och skalbarhet gör den till en populär blockkedja för att bygga decentraliserade appar (dappar). TRX-token ansluter hela TRON-ekosystemet och har ett antal tillämpningar, bland annat för att få rösträtt och bandbredd.
@@ -92,10 +104,7 @@ def layout():
     df = load_data(crypto_choice)
 
     if df.empty:
-        if crypto_choice == "S":
-            st.warning("Ingen data tillgänglig för Sonic ännu. Se till att producer_s.py och consumer_s.py körs och vänta på att data ska börja strömma in.")
-        else:
-            st.warning("Ingen data tillgänglig ännu. Vänta på uppdateringar...")
+        st.warning(f"Ingen data tillgänglig för {selected_crypto} ännu. Vänta på uppdateringar...")
         return
 
     latest = df.iloc[0]
@@ -114,7 +123,15 @@ def layout():
     st.markdown(f"### 📊 Handelsvolym för {selected_crypto} i {currency_choice}")
     fig_volume = line_chart(df.index, df[f"volume_{currency_choice.lower()}"], title="Volym över tid", xlabel="Tid", ylabel="Volym")
     st.pyplot(fig_volume)
-    
+
+    with st.container():
+        st.markdown(f"### 📋 Data Tabell för {selected_crypto} i {currency_choice}")
+        st.dataframe(df[[f"price_{currency_choice.lower()}", 
+                         f"volume_{currency_choice.lower()}", 
+                         "volume_change_24h", 
+                         "percent_change_24h"]], 
+                     use_container_width=True)
+
     time.sleep(60)
     st.rerun()
 
