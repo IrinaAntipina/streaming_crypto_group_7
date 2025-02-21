@@ -62,11 +62,11 @@ def load_data(symbol):
 
 def format_number(value, suffix=""):
     if abs(value) >= 1_000_000_000:
-        return f"{value / 1_000_000_000:.1f}B{suffix}"
+        return f"{value / 1_000_000_000:.1f}MD{suffix}"
     elif abs(value) >= 1_000_000:
-        return f"{value / 1_000_000:.1f}M{suffix}"
+        return f"{value / 1_000_000:.1f}MN{suffix}"
     elif abs(value) >= 1_000:
-        return f"{value / 1_000:.1f}K{suffix}"
+        return f"{value / 1_000:.1f}T{suffix}"
     return f"{value:.2f}{suffix}"
 
 def layout():
