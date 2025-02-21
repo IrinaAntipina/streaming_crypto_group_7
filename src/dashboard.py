@@ -15,13 +15,13 @@ connection_string = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@
 engine = create_engine(connection_string)
 
 st.markdown("""
-    <style>
+     <style>
         body, [data-testid="stAppViewContainer"] {
             background-color: #0e1117;
             color: white;
         }
         h1, h2, h3 {
-            font-family: 'Arial', sans-serif';
+            font-family: 'Arial', sans-serif;
             color: #f39c12;
             text-align: center;
         }
@@ -35,7 +35,6 @@ st.markdown("""
             border-radius: 10px;
             padding: 10px;
         }
-        /* 🔹 Mörk bakgrund och vit text för tabeller */
         section[data-testid="stTable"] {
             background-color: #0e1117 !important;
             color: white !important;
@@ -48,7 +47,34 @@ st.markdown("""
             border-radius: 10px;
             padding: 10px;
         }
+        
+      
+        .marquee {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee span {
+            display: inline-block;
+            padding-left: 100%;
+            font-size: 36px; 
+            color: #FF5733;
+            animation: marquee 10s linear infinite;
+        }
+        @keyframes marquee {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-100%);
+            }
+        }
     </style>
+            
+    <div class="marquee">
+        <span>Thorbjörn Persson Steive, Milou Sandén Lindroth, Irina Antipina</span>
+    </div>
+
 """, unsafe_allow_html=True)
 
 def load_data(symbol):
